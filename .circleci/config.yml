@@ -1,0 +1,25 @@
+version: 2.1
+jobs:
+  compute:
+    docker:
+      - image: cimg/base:current
+    resource_class: medium
+    parallelism: 1
+    steps:
+      - run:
+          name: info
+          command: |
+            echo "hello from ${CIRCLE_JOB} node ${CIRCLE_NODE_INDEX:-0}"
+            uname -a
+            nproc
+      - run:
+          name: work
+          command: |
+            for i in $(seq 1 5); do echo "tick $i $(date +%H:%M:%S)"; done
+            x=0; for i in $(seq 1 20000000); do x=$((x+1)); done; echo "loop done x=$x"
+            sleep 60
+            echo "finished ok"
+workflows:
+  main:
+    jobs:
+      - compute: {name: w0}
